@@ -1,17 +1,27 @@
 import api from "./axios";
 
-export const getProjectTasksApi = (projectId) => {
-  return api.get(`/projects/${projectId}/tasks`);
+// Get tasks of a project ///pagination API
+export const getProjectTasksApi = (projectId, params) => {
+  return api.get(`/projects/${projectId}/tasks`, { params });
 };
 
+
+// Create task
 export const createTaskApi = (projectId, data) => {
   return api.post(`/projects/${projectId}/tasks`, data);
 };
 
-export const updateTaskApi = (taskId, data) => {
-  return api.put(`/tasks/${taskId}`, data);
+// 🔹 Get task data for edit screen
+export const getTaskForEditApi = (taskId) => {
+  return api.get(`/tasks/${taskId}/edit`);
 };
 
+// 🔹 Update task (PATCH, not PUT)
+export const updateTaskApi = (taskId, data) => {
+  return api.patch(`/tasks/${taskId}`, data);
+};
+
+// Delete task
 export const deleteTaskApi = (taskId) => {
   return api.delete(`/tasks/${taskId}`);
 };

@@ -89,7 +89,7 @@ const ProjectMembers = ({ projectId }) => {
 
                 <button
                   className="text-red-600 hover:underline"
-                  onClick={() => handleRemove(m.userId)}
+                  onClick={() => handleRemove(m.user.id)}
                 >
                   Remove
                 </button>

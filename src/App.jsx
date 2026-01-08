@@ -12,7 +12,7 @@ import AdminEditProject from "./pages/admin/AdminEditProject";
 import UserProjectTasks from "./pages/user/UserProjectTasks";
 
 import Unauthorized from "./pages/Unauthorized";
-
+import EditTaskPage from "./pages/user/EditTaskPage";
 function App() {
   return (
     <BrowserRouter>
@@ -71,6 +71,9 @@ function App() {
     </ProtectedRoute>
   }
 />
+ {/* edit task */}
+<Route path="/tasks/:taskId/edit" element={<EditTaskPage />} />
+
 <Route
   path="/dashboard"
   element={

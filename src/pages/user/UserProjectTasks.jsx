@@ -4,7 +4,6 @@ import MainLayout from "../../layouts/MainLayout";
 import {
   getProjectTasksApi,
   deleteTaskApi,
-  updateTaskApi,
 } from "../../api/task.api";
 import TaskForm from "./TaskForm";
 
@@ -12,71 +11,56 @@ const UserProjectTasks = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
 
+  // 🔹 Data
   const [tasks, setTasks] = useState([]);
+  const [pagination, setPagination] = useState(null);
+
+  // 🔹 UI state
   const [loading, setLoading] = useState(true);
 
-  // Search state
+  // 🔹 Pagination
+  const [page, setPage] = useState(1);
+  const limit = 5;
+
+  // 🔹 Filters
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
 
-  // Edit state
-  const [editingTaskId, setEditingTaskId] = useState(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editPriority, setEditPriority] = useState("MEDIUM");
-
-  // Fetch tasks
+  // 🔹 Fetch tasks
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await getProjectTasksApi(projectId);
-      setTasks(res.data);
-    } catch {
-      console.error("Failed to fetch tasks");
+
+      const res = await getProjectTasksApi(projectId, {
+        page,
+        limit,
+        search: search || undefined,
+        status: status || undefined,
+        priority: priority || undefined,
+      });
+
+      setTasks(res.data.data);              // ✅ ARRAY ONLY
+      setPagination(res.data.pagination);   // ✅ META
+
+    } catch (err) {
+      console.error("Failed to fetch tasks", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // On project change
+  // 🔹 Re-fetch when params change
   useEffect(() => {
     fetchTasks();
-    setSearch(""); // clear search on project switch
-  }, [projectId]);
+  }, [projectId, page, search, status, priority]);
 
-  // Delete task
+  // 🔹 Delete task
   const handleDelete = async (taskId) => {
     if (!confirm("Delete this task?")) return;
     await deleteTaskApi(taskId);
     fetchTasks();
   };
-
-  // Start editing
-  const startEdit = (task) => {
-    setEditingTaskId(task.id);
-    setEditTitle(task.title);
-    setEditPriority(task.priority);
-  };
-
-  // Update task
-  const handleUpdate = async () => {
-    if (!editTitle.trim()) return;
-
-    await updateTaskApi(editingTaskId, {
-      title: editTitle.trim(),
-      priority: editPriority,
-    });
-
-    setEditingTaskId(null);
-    fetchTasks();
-  };
-
-  // Filter tasks (title + priority)
-  const filteredTasks = tasks.filter((task) => {
-    const q = search.toLowerCase();
-    return (
-      task.title.toLowerCase().includes(q) ||
-      task.priority.toLowerCase().includes(q)
-    );
-  });
 
   return (
     <MainLayout>
@@ -93,90 +77,109 @@ const UserProjectTasks = () => {
       {/* Create Task */}
       <TaskForm projectId={projectId} onSuccess={fetchTasks} />
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search tasks by title or priority..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border p-2 rounded w-full mb-4"
-      />
+      {/* 🔍 Filters */}
+      <div className="flex gap-2 mb-4">
+        <input
+          className="border p-2 rounded flex-1"
+          placeholder="Search by title..."
+          value={search}
+          onChange={(e) => {
+            setPage(1);       // reset page on search
+            setSearch(e.target.value);
+          }}
+        />
+
+        <select
+          className="border p-2 rounded"
+          value={status}
+          onChange={(e) => {
+            setPage(1);
+            setStatus(e.target.value);
+          }}
+        >
+          <option value="">All Status</option>
+          <option value="TODO">TODO</option>
+          <option value="IN_PROGRESS">IN PROGRESS</option>
+          <option value="UNDER_REVIEW">UNDER REVIEW</option>
+          <option value="DONE">DONE</option>
+        </select>
+
+        <select
+          className="border p-2 rounded"
+          value={priority}
+          onChange={(e) => {
+            setPage(1);
+            setPriority(e.target.value);
+          }}
+        >
+          <option value="">All Priority</option>
+          <option value="LOW">LOW</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="HIGH">HIGH</option>
+        </select>
+      </div>
 
       {/* Task List */}
       {loading ? (
         <p>Loading tasks...</p>
-      ) : filteredTasks.length === 0 ? (
-        <p>No matching tasks</p>
+      ) : tasks.length === 0 ? (
+        <p>No tasks found</p>
       ) : (
         <ul className="space-y-2">
-          {filteredTasks.map((t) => (
+          {tasks.map((t) => (
             <li
               key={t.id}
               className="border p-3 rounded flex justify-between items-center"
             >
-              {editingTaskId === t.id ? (
-                <div className="flex gap-2 flex-1">
-                  <input
-                    className="border p-1 flex-1 rounded"
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                  />
-
-                  <select
-                    className="border p-1 rounded"
-                    value={editPriority}
-                    onChange={(e) => setEditPriority(e.target.value)}
-                  >
-                    <option value="LOW">LOW</option>
-                    <option value="MEDIUM">MEDIUM</option>
-                    <option value="HIGH">HIGH</option>
-                  </select>
-                </div>
-              ) : (
-                <div>
-                  <p className="font-medium">{t.title}</p>
-                  <p className="text-sm text-gray-500">
-                    {t.status} • {t.priority}
-                  </p>
-                </div>
-              )}
+              <div>
+                <p className="font-medium">{t.title}</p>
+                <p className="text-sm text-gray-500">
+                  {t.status} • {t.priority}
+                </p>
+              </div>
 
               <div className="flex gap-3">
-                {editingTaskId === t.id ? (
-                  <>
-                    <button
-                      onClick={handleUpdate}
-                      className="text-green-600 hover:underline"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingTaskId(null)}
-                      className="text-gray-600 hover:underline"
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => startEdit(t)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(t.id)}
-                      className="text-red-600 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </>
-                )}
+                <button
+                  onClick={() => navigate(`/tasks/${t.id}/edit`)}
+                  className="text-blue-600 hover:underline"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(t.id)}
+                  className="text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
               </div>
             </li>
           ))}
         </ul>
+      )}
+
+      {/* 🔢 Pagination */}
+      {pagination && (
+        <div className="flex items-center gap-4 mt-4">
+          <button
+            disabled={!pagination.hasPrevPage}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          <span>
+            Page {pagination.page} of {pagination.totalPages}
+          </span>
+
+          <button
+            disabled={!pagination.hasNextPage}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       )}
     </MainLayout>
   );
