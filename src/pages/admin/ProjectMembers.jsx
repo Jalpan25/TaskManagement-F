@@ -1,37 +1,41 @@
 import { useEffect, useState } from "react";
 import {
-  getAvailableUsersApi,
   addMembersApi,
+  getAvailableUsersApi,
   getMembersApi,
   removeMemberApi,
 } from "../../api/projectMembers.api";
 
-const ProjectMembers = ({ projectId }) => {
+
+const ProjectMembers = ({projectId}) => {
   const [assigned, setAssigned] = useState([]);
   const [available, setAvailable] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
-  const fetchData = async () => {
+
+  const fetchData = async (pID) => {
     try {
       setLoading(true);
-//run both api immediatley
       const [membersRes, usersRes] = await Promise.all([
-        getMembersApi(projectId),
-        getAvailableUsersApi(projectId),
+        getMembersApi(pID),
+        getAvailableUsersApi(pID),
       ]);
 
       setAssigned(membersRes.data);
       setAvailable(usersRes.data.available);
     } catch (err) {
-      console.error("Failed to load project members");
+      console.error("Failed to load project members" , err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    if(projectId){
+      fetchData(projectId);
+    }
   }, [projectId]);
 
   const toggleSelect = (userId) => {
@@ -45,20 +49,19 @@ const ProjectMembers = ({ projectId }) => {
   const handleAddMembers = async () => {
     if (selectedUsers.length === 0) return;
 
-    await addMembersApi(
-      projectId,
-      selectedUsers.map((id) => ({ userId: id }))
-    );
-
+    const payLoad = selectedUsers.map((id) => ({ userId: id })); 
+      await addMembersApi(
+        projectId,
+        payLoad
+      );
     setSelectedUsers([]);
-    fetchData();
+    fetchData(projectId)
   };
 
   const handleRemove = async (userId) => {
     if (!confirm("Remove this member from project?")) return;
-
-    await removeMemberApi(projectId, userId);
-    fetchData();
+      await removeMemberApi(projectId, userId);
+    fetchData(projectId)
   };
 
   if (loading) return <p>Loading members...</p>;
@@ -75,21 +78,21 @@ const ProjectMembers = ({ projectId }) => {
           <p className="text-gray-500">No members assigned</p>
         ) : (
           <ul className="border rounded">
-            {assigned.map((m, index) => (
+            {assigned?.length > 0 && assigned.map((user, index) => (
               <li
                 key={index}
                 className="flex justify-between items-center p-2 border-b"
               >
                 <div>
-                  <p className="font-medium">{m.user.name}</p>
+                  <p className="font-medium">{user?.name}</p>
                   <p className="text-sm text-gray-500">
-                    {m.user.email}
+                    {user?.email}
                   </p>
                 </div>
 
                 <button
                   className="text-red-600 hover:underline"
-                  onClick={() => handleRemove(m.user.id)}
+                  onClick={() => handleRemove(user?.id)}
                 >
                   Remove
                 </button>
