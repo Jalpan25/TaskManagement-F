@@ -5,7 +5,7 @@ import {
   getProjectTasksApi,
   deleteTaskApi,
 } from "../../api/task.api";
-import TaskForm from "./TaskForm";
+
 
 const UserProjectTasks = () => {
   const { projectId } = useParams();
@@ -73,9 +73,13 @@ const UserProjectTasks = () => {
       </button>
 
       <h1 className="text-xl font-bold mb-4">Project Tasks</h1>
+      <button
+  onClick={() => navigate(`/projects/${projectId}/tasks/create`)}
+  className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
+>
+  + Create Task
+</button>
 
-      {/* Create Task */}
-      <TaskForm projectId={projectId} onSuccess={fetchTasks} />
 
       {/* 🔍 Filters */}
       <div className="flex gap-2 mb-4">
@@ -139,19 +143,28 @@ const UserProjectTasks = () => {
               </div>
 
               <div className="flex gap-3">
-                <button
-                  onClick={() => navigate(`/tasks/${t.id}/edit`)}
-                  className="text-blue-600 hover:underline"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(t.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
+        <button
+          onClick={() => navigate(`/tasks/${t.id}/edit`)}
+          className="text-blue-600 hover:underline"
+        >
+          Edit
+        </button>
+
+        <button
+          onClick={() => navigate(`/tasks/${t.id}/comments`)}
+          className="text-green-600 hover:underline"
+        >
+          Comments
+        </button>
+
+        <button
+          onClick={() => handleDelete(t.id)}
+          className="text-red-600 hover:underline"
+        >
+          Delete
+        </button>
+</div>
+
             </li>
           ))}
         </ul>

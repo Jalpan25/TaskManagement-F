@@ -12,9 +12,17 @@ export const createTaskApi = (projectId, data) => {
 };
 
 // 🔹 Get task data for edit screen
-export const getTaskForEditApi = (taskId) => {
-  return api.get(`/tasks/${taskId}/edit`);
+export const getTaskForEditApi = (
+  taskId,
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  return api.get(`/tasks/${taskId}/edit`, {
+    params: { page, limit, search },
+  });
 };
+
 
 // 🔹 Update task (PATCH, not PUT)
 export const updateTaskApi = (taskId, data) => {

@@ -9,8 +9,11 @@ export const addMembersApi = (projectId, members) =>
   api.post(`/projects/${projectId}/members`, { members });
 
 /* Get members */
-export const getMembersApi = (projectId) =>
-  api.get(`/projects/${projectId}/members`);
+//here shows all the member of that particular id project
+export const getMembersApi = (projectId, page = 1, limit = 10, search = "") =>
+  api.get(`/projects/${projectId}/members`, {
+    params: { page, limit, search },
+  });
 
 /* Remove member */
 export const removeMemberApi = (projectId, userId) =>

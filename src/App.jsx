@@ -10,9 +10,10 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCreateProject from "./pages/admin/AdminCreateProject";
 import AdminEditProject from "./pages/admin/AdminEditProject";
 import UserProjectTasks from "./pages/user/UserProjectTasks";
-
+import TaskCommentsPage from "./pages/user/TaskCommentsPage";
 import Unauthorized from "./pages/Unauthorized";
 import EditTaskPage from "./pages/user/EditTaskPage";
+import CreateTaskPage from "./pages/user/CreateTaskPage"
 function App() {
   return (
     <BrowserRouter>
@@ -52,6 +53,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+ {/* create Task */}
+<Route
+  path="/projects/:projectId/tasks/create"
+  element={
+    <ProtectedRoute role="USER"><CreateTaskPage /> </ProtectedRoute>
+  }
+/>
+
+
            {/* create project */}
           <Route
   path="/admin/projects/create"
@@ -61,6 +71,11 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+{
+//task crud
+}
+<Route path="/tasks/:taskId/comments" element={<ProtectedRoute role="USER"><TaskCommentsPage /></ProtectedRoute>} />
 
  {/* edit project */}
 <Route
