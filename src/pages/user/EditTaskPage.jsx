@@ -20,13 +20,13 @@ const EditTaskPage = () => {
   const [task, setTask] = useState(null);
   const [members, setMembers] = useState([]);
 
-  // 🔹 IMPORTANT: store original assigned members
+  //  IMPORTANT: store original assigned members
   const [originalAssignedIds, setOriginalAssignedIds] = useState([]);
   
-  // 🔹 Track current assigned state across re-renders
+  //  Track current assigned state across re-renders
   const currentAssignedRef = useRef(new Map());
   
-  // 🔹 Ref to maintain focus on search input
+  //  Ref to maintain focus on search input
   const searchInputRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -158,7 +158,7 @@ const EditTaskPage = () => {
   // Save changes (FIXED LOGIC)
   // ============================
   const handleUpdate = async () => {
-    console.log("handleUpdate called");
+    //console.log("handleUpdate called");
     
     if (!task.title.trim()) {
       setError("Task title is required");
@@ -174,10 +174,10 @@ const EditTaskPage = () => {
         .filter(([id, assigned]) => assigned)
         .map(([id]) => id);
 
-      console.log("Original assigned IDs:", originalAssignedIds);
-      console.log("Current assigned IDs:", currentAssignedIds);
+      //console.log("Original assigned IDs:", originalAssignedIds);
+     // console.log("Current assigned IDs:", currentAssignedIds);
 
-      // 🔥 DIFF LOGIC (THIS FIXES UNCHECK ISSUE)
+      //  DIFF LOGIC (THIS FIXES UNCHECK ISSUE)
       const addAssigneeIds = currentAssignedIds.filter(
         (id) => !originalAssignedIds.includes(id)
       );
@@ -186,8 +186,8 @@ const EditTaskPage = () => {
         (id) => !currentAssignedIds.includes(id)
       );
 
-      console.log("Add assignees:", addAssigneeIds);
-      console.log("Remove assignees:", removeAssigneeIds);
+     // console.log("Add assignees:", addAssigneeIds);
+     // console.log("Remove assignees:", removeAssigneeIds);
 
       const payload = {
         title: task.title,
@@ -199,12 +199,12 @@ const EditTaskPage = () => {
         removeAssigneeIds,
       };
 
-      console.log("Payload to send:", payload);
-      console.log("Calling updateTaskApi with taskId:", taskId);
+      //console.log("Payload to send:", payload);
+      //console.log("Calling updateTaskApi with taskId:", taskId);
 
       const response = await updateTaskApi(taskId, payload);
       
-      console.log("API response:", response);
+      //console.log("API response:", response);
 
       navigate(-1);
     } catch (err) {

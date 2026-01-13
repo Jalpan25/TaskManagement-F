@@ -33,16 +33,29 @@ const UserDashboard = () => {
         <p>No projects assigned</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {projects.map((p) => (
-            <div
-              key={p.id}
-              className="border rounded p-4 cursor-pointer hover:shadow"
-              onClick={() => navigate(`/user/projects/${p.id}`)}
-            >
-              <h2 className="font-semibold">{p.name}</h2>
-              <p className="text-sm text-gray-600">{p.description}</p>
-            </div>
-          ))}
+{projects.map((p) => (
+  <div
+    key={p.id}
+    className="border rounded p-4 hover:shadow flex flex-col gap-3"
+  >
+    <div
+      className="cursor-pointer"
+      onClick={() => navigate(`/user/projects/${p.id}`)}
+    >
+      <h2 className="font-semibold">{p.name}</h2>
+      <p className="text-sm text-gray-600">{p.description}</p>
+    </div>
+
+    {/* Logs Button */}
+    <button
+      onClick={() => navigate(`/user/projects/${p.id}/logs`)}
+      className="self-start text-sm px-3 py-1 border rounded hover:bg-gray-100"
+    >
+      View Logs
+    </button>
+  </div>
+))}
+
         </div>
       )}
     </MainLayout>

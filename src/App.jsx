@@ -14,6 +14,9 @@ import TaskCommentsPage from "./pages/user/TaskCommentsPage";
 import Unauthorized from "./pages/Unauthorized";
 import EditTaskPage from "./pages/user/EditTaskPage";
 import CreateTaskPage from "./pages/user/CreateTaskPage"
+
+import ProjectLogs from "./pages/user/ProjectLogs";
+
 function App() {
   return (
     <BrowserRouter>
@@ -97,6 +100,13 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+
+<Route
+  path="/user/projects/:projectId/logs"
+  element={ <ProtectedRoute role="USER"><ProjectLogs /></ProtectedRoute>}
+/>
+
 
 <Route
   path="/user/projects/:projectId"

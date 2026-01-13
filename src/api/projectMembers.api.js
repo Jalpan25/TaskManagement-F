@@ -10,6 +10,7 @@ export const addMembersApi = (projectId, members) =>
 
 /* Get members */
 //here shows all the member of that particular id project
+//removed api 
 export const getMembersApi = (projectId, page = 1, limit = 10, search = "") =>
   api.get(`/projects/${projectId}/members`, {
     params: { page, limit, search },

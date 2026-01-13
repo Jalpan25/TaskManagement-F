@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   addMembersApi,
   getAvailableUsersApi,
-  getMembersApi,
   removeMemberApi,
 } from "../../api/projectMembers.api";
 
@@ -18,13 +17,9 @@ const ProjectMembers = ({projectId}) => {
   const fetchData = async (pID) => {
     try {
       setLoading(true);
-      const [membersRes, usersRes] = await Promise.all([
-        getMembersApi(pID),
-        getAvailableUsersApi(pID),
-      ]);
-
-      setAssigned(membersRes.data);
-      setAvailable(usersRes.data.available);
+      const membersRes = await getAvailableUsersApi(pID);
+      setAssigned(membersRes.data.assigned);
+      setAvailable(membersRes.data.available);
     } catch (err) {
       console.error("Failed to load project members" , err);
     } finally {
