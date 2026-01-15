@@ -15,7 +15,7 @@ import Unauthorized from "./pages/Unauthorized";
 import EditTaskPage from "./pages/user/EditTaskPage";
 import CreateTaskPage from "./pages/user/CreateTaskPage"
 
-import ProjectLogs from "./pages/user/ProjectLogs";
+import TaskLogs from "./pages/user/TaskLogs";
 
 function App() {
   return (
@@ -102,10 +102,13 @@ function App() {
 />
 
 
-<Route
+{/* <Route
   path="/user/projects/:projectId/logs"
   element={ <ProtectedRoute role="USER"><ProjectLogs /></ProtectedRoute>}
-/>
+/> */}
+
+<Route path="/tasks/:taskId/logs" element={<ProtectedRoute role="USER"><TaskLogs /></ProtectedRoute>} />
+
 
 
 <Route

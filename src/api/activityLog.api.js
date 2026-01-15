@@ -1,10 +1,9 @@
 import api from "./axios"; // your axios instance
 
-export const getProjectActivityLogsApi = (projectId, cursor) => {
-  return api.get(`/projects/${projectId}/activity-logs`, {
+export const getTaskActivityLogsApi = (taskId, cursor) => {
+  return api.get(`/tasks/${taskId}/activity-logs`, {
     params: {
-      limit: 20,
-      ...(cursor && { cursor }),
+      cursor,
     },
   });
 };

@@ -142,27 +142,35 @@ const UserProjectTasks = () => {
                 </p>
               </div>
 
-              <div className="flex gap-3">
-        <button
-          onClick={() => navigate(`/tasks/${t.id}/edit`)}
-          className="text-blue-600 hover:underline"
-        >
-          Edit
-        </button>
+<div className="flex gap-3">
+  <button
+    onClick={() => navigate(`/tasks/${t.id}/edit`)}
+    className="text-blue-600 hover:underline"
+  >
+    Edit
+  </button>
 
-        <button
-          onClick={() => navigate(`/tasks/${t.id}/comments`)}
-          className="text-green-600 hover:underline"
-        >
-          Comments
-        </button>
+  <button
+    onClick={() => navigate(`/tasks/${t.id}/comments`)}
+    className="text-green-600 hover:underline"
+  >
+    Comments
+  </button>
 
-        <button
-          onClick={() => handleDelete(t.id)}
-          className="text-red-600 hover:underline"
-        >
-          Delete
-        </button>
+  {/* ✅ NEW: Task Logs */}
+  <button
+    onClick={() => navigate(`/tasks/${t.id}/logs`)}
+    className="text-purple-600 hover:underline"
+  >
+    Logs
+  </button>
+
+  <button
+    onClick={() => handleDelete(t.id)}
+    className="text-red-600 hover:underline"
+  >
+    Delete
+  </button>
 </div>
 
             </li>

@@ -46,13 +46,7 @@ const UserDashboard = () => {
       <p className="text-sm text-gray-600">{p.description}</p>
     </div>
 
-    {/* Logs Button */}
-    <button
-      onClick={() => navigate(`/user/projects/${p.id}/logs`)}
-      className="self-start text-sm px-3 py-1 border rounded hover:bg-gray-100"
-    >
-      View Logs
-    </button>
+
   </div>
 ))}
 
