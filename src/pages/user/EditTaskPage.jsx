@@ -26,7 +26,7 @@ const EditTaskPage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Load task + initial members
+//  Load task + initial members
   useEffect(() => {
     const loadTask = async () => {
       try {
@@ -50,7 +50,6 @@ const EditTaskPage = () => {
         setLoading(false);
       }
     };
-
     loadTask();
   }, [taskId]);
 
@@ -71,7 +70,16 @@ const EditTaskPage = () => {
       }
     };
 
-    loadMembers();
+        const timerId=setTimeout(()=>{
+              loadMembers();
+          
+        },500);
+
+        return()=>{
+          clearTimeout(timerId);
+        }
+
+    //loadMembers();
   }, [taskId, page, search, loading]);
 
   useEffect(() => {

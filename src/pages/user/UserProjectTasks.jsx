@@ -52,10 +52,17 @@ const UserProjectTasks = () => {
 
   //  Re-fetch when params change
   useEffect(() => {
-    fetchTasks();
+
+    const timerId=setTimeout(()=>{
+      fetchTasks();
+    },500);
+          return()=>{
+        clearTimeout(timerId);
+      };
+    
   }, [projectId, page, search, status, priority]);
 
-  //  Delete task
+  
   const handleDelete = async (taskId) => {
     if (!confirm("Delete this task?")) return;
     await deleteTaskApi(taskId);
