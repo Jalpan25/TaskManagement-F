@@ -1,8 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import {getSelfDeatils } from "../api/selfDetails.api.js"
+import { useEffect,useState } from "react";
+
+import Profile from "./Profile.jsx";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const[userDetails,setUserDeatils]=useState(null);
+  const[showProfile,setshowProfile]=useState(false);
+  useEffect(()=>{
+
+    const fetchUserDetails=async()=>{
+    const data=await getSelfDeatils();
+    setUserDeatils(data.data);
+    }
+
+    fetchUserDetails();
+  },[]);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -27,6 +42,19 @@ const Navbar = () => {
           <Link to="/dashboard" className="hover:underline">
             Dashboard
           </Link>
+        )}
+
+
+         <button
+          onClick={() => setshowProfile((prev) => !prev)}
+          className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center font-semibold"
+        >
+          {userDetails?.name?.charAt(0).toUpperCase() || "U"}
+        </button>
+
+         {/* Profile dropdown */}
+        {showProfile && userDetails && (
+          <Profile data={userDetails} />
         )}
 
         <button

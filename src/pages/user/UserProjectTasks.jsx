@@ -87,12 +87,11 @@ const UserProjectTasks = () => {
 
       <h1 className="text-xl font-bold mb-4">Project Tasks</h1>
       <button
-  onClick={() => navigate(`/projects/${projectId}/tasks/create`)}
-  className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
->
-  + Create Task
-</button>
-
+      onClick={() => navigate(`/projects/${projectId}/tasks/create`)}
+      className="mb-4 bg-blue-600 text-white px-4 py-2 rounded"
+    >
+      + Create Task
+    </button>
 
       {/*  Filters */}
       <div className="flex gap-2 mb-4">
@@ -148,12 +147,32 @@ const UserProjectTasks = () => {
               key={t.id}
               className="border p-3 rounded flex justify-between items-center"
             >
-              <div>
+              {/* <div>
                 <p className="font-medium">{t.title}</p>
                 <p className="text-sm text-gray-500">
-                  {t.status} • {t.priority}
+                  {t.status} • {t.priority}  •  { && ("Date Gone to complete work")}
                 </p>
-              </div>
+              </div> */}
+
+              <div>
+  <p className="font-medium text-gray-900">{t.title}</p>
+
+  <p className="text-sm text-gray-500 flex flex-wrap gap-2 items-center">
+    <span>{t.status}</span>
+    <span>•</span>
+    <span>{t.priority}</span>
+
+    {new Date(t.dueDate) < new Date() && (
+      <>
+        <span>•</span>
+        <span className="text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded">
+          Overdue
+        </span>
+      </>
+    )}
+  </p>
+</div>
+      
 
 <div className="flex gap-3">
   <button
