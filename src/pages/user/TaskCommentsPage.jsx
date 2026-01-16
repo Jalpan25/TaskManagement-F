@@ -18,8 +18,11 @@ const TaskCommentsPage = () => {
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [error, setError] = useState("");
 
-  /* ================= AUTH ================= */
+
+
+//Auth
   const getLoggedInUserId = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
@@ -34,7 +37,7 @@ const TaskCommentsPage = () => {
 
   const loggedInUserId = getLoggedInUserId();
 
-  /* ================= FETCH COMMENTS ================= */
+//fetch comments
   const fetchComments = async () => {
     try {
       setLoading(true);
@@ -51,20 +54,22 @@ const TaskCommentsPage = () => {
     fetchComments();
   }, [taskId]);
 
-  /* ================= ADD ================= */
-  const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+  //ADD
+const handleAddComment = async () => {
+  if (!newComment.trim()) return;
 
-    try {
-      await createCommentApi(taskId, { content: newComment });
-      setNewComment("");
-      fetchComments();
-    } catch (err) {
-      console.error("Failed to add comment", err);
-    }
-  };
+  try {
+    setError("");
+    await createCommentApi(taskId, { content: newComment });
+    setNewComment("");
+    fetchComments();
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to add comment");
+  }
+};
 
-  /* ================= EDIT ================= */
+
+  //edit
   const startEdit = (comment) => {
     setEditingCommentId(comment.id);
     setEditContent(comment.content);
@@ -75,35 +80,37 @@ const TaskCommentsPage = () => {
     setEditContent("");
   };
 
-  const handleUpdateComment = async (commentId) => {
-    if (!editContent.trim()) return;
+  //update comment
+const handleUpdateComment = async (commentId) => {
+  if (!editContent.trim()) return;
 
-    try {
-      await updateCommentApi(commentId, { content: editContent });
-      cancelEdit();
-      fetchComments();
-    } catch (err) {
-      console.error("Failed to update comment", err);
-    }
-  };
+  try {
+    setError("");
+    await updateCommentApi(commentId, { content: editContent });
+    cancelEdit();
+    fetchComments();
+  } catch (err) {
+    setError(
+      err.response?.data?.message || "Failed to update comment"
+    );
+  }
+};
 
-  /* ================= DELETE ================= */
-  const handleDeleteComment = async (commentId) => {
-    if (!commentId) return;
+  //delete comment
+const handleDeleteComment = async (commentId) => {
+  if (!window.confirm("Are you sure you want to delete this comment?")) return;
 
-    if (!window.confirm("Are you sure you want to delete this comment?")) {
-      return;
-    }
+  try {
+    setError("");
+    await deleteCommentApi(commentId);
+    fetchComments();
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to delete comment");
+  }
+};
 
-    try {
-      await deleteCommentApi(commentId);
-      fetchComments();
-    } catch (err) {
-      console.error("Failed to delete comment", err);
-    }
-  };
 
-  /* ================= UI ================= */
+
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h2 className="text-xl font-semibold mb-4">Comments</h2>
@@ -123,7 +130,12 @@ const TaskCommentsPage = () => {
         >
           Add Comment
         </button>
-      </div>
+            </div>
+            {error && (
+        <div className="mb-4 text-red-600 bg-red-100 border border-red-300 px-3 py-2 rounded">
+          {error}
+        </div>
+      )}
 
       {/* COMMENTS LIST */}
       {loading ? (
@@ -175,7 +187,9 @@ const TaskCommentsPage = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteComment(c.id)}
+                        onClick={() =>{ handleDeleteComment(c.id)
+                          console.log("handleDeleteComment rendered")}
+                        }
                         className="text-red-600 text-sm"
                       >
                         Delete

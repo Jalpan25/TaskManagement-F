@@ -19,11 +19,11 @@ const TaskLogs = () => {
     try {
       const res = await getTaskActivityLogsApi(taskId, cursor);
 
-      setLogs(prev => {
-  const seen = new Set(prev.map(l => l.id));
-  const uniqueNewLogs = res.data.logs.filter(l => !seen.has(l.id));
-  return [...prev, ...uniqueNewLogs];
-});
+          setLogs(prev => {
+      const seen = new Set(prev.map(l => l.id));
+      const uniqueNewLogs = res.data.logs.filter(l => !seen.has(l.id));
+      return [...prev, ...uniqueNewLogs];
+    });
 
       setCursor(res.data.nextCursor);
       setHasMore(res.data.hasMore);

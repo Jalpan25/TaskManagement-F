@@ -75,9 +75,6 @@ function App() {
   }
 />
 
-{
-//task crud
-}
 <Route path="/tasks/:taskId/comments" element={<ProtectedRoute role="USER"><TaskCommentsPage /></ProtectedRoute>} />
 
  {/* edit project */}

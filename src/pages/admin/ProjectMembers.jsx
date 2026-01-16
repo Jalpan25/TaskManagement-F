@@ -5,14 +5,11 @@ import {
   removeMemberApi,
 } from "../../api/projectMembers.api";
 
-
-const ProjectMembers = ({projectId}) => {
+const ProjectMembers = ({ projectId }) => {
   const [assigned, setAssigned] = useState([]);
   const [available, setAvailable] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-
 
   const fetchData = async (pID) => {
     try {
@@ -21,14 +18,14 @@ const ProjectMembers = ({projectId}) => {
       setAssigned(membersRes.data.assigned);
       setAvailable(membersRes.data.available);
     } catch (err) {
-      console.error("Failed to load project members" , err);
+      console.error("Failed to load project members", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if(projectId){
+    if (projectId) {
       fetchData(projectId);
     }
   }, [projectId]);
@@ -44,19 +41,24 @@ const ProjectMembers = ({projectId}) => {
   const handleAddMembers = async () => {
     if (selectedUsers.length === 0) return;
 
-    const payLoad = selectedUsers.map((id) => ({ userId: id })); 
-      await addMembersApi(
-        projectId,
-        payLoad
-      );
+    const payload = selectedUsers.map((id) => ({ userId: id }));
+    await addMembersApi(projectId, payload);
     setSelectedUsers([]);
-    fetchData(projectId)
+    fetchData(projectId);
   };
+  const handleRemove = async (user) => {
+    const message = user.hasAssignedTasks
+      ? "This user is already assigned to tasks in this project.\n\nAre you sure you want to remove them from the project?"
+      : "Remove this member from the project?";
 
-  const handleRemove = async (userId) => {
-    if (!confirm("Remove this member from project?")) return;
-      await removeMemberApi(projectId, userId);
-    fetchData(projectId)
+    if (!window.confirm(message)) return;
+
+    try {
+      await removeMemberApi(projectId, user.id);
+      fetchData(projectId);
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to remove member");
+    }
   };
 
   if (loading) return <p>Loading members...</p>;
@@ -73,21 +75,29 @@ const ProjectMembers = ({projectId}) => {
           <p className="text-gray-500">No members assigned</p>
         ) : (
           <ul className="border rounded">
-            {assigned?.length > 0 && assigned.map((user, index) => (
+            {assigned.map((user) => (
               <li
-                key={index}
+                key={user.id}
                 className="flex justify-between items-center p-2 border-b"
               >
                 <div>
-                  <p className="font-medium">{user?.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {user?.email}
-                  </p>
+                  <p className="font-medium">{user.name}</p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
+
+                  {user.hasAssignedTasks && (
+                    <p className="text-xs text-orange-600 mt-1">
+                      ⚠ Assigned to tasks
+                    </p>
+                  )}
                 </div>
 
                 <button
-                  className="text-red-600 hover:underline"
-                  onClick={() => handleRemove(user?.id)}
+                  className={`hover:underline ${
+                    user.hasAssignedTasks
+                      ? "text-orange-600"
+                      : "text-red-600"
+                  }`}
+                  onClick={() => handleRemove(user)}
                 >
                   Remove
                 </button>
@@ -106,10 +116,7 @@ const ProjectMembers = ({projectId}) => {
         ) : (
           <div className="border rounded p-3">
             {available.map((u) => (
-              <label
-                key={u.id}
-                className="flex items-center gap-2 mb-2"
-              >
+              <label key={u.id} className="flex items-center gap-2 mb-2">
                 <input
                   type="checkbox"
                   checked={selectedUsers.includes(u.id)}

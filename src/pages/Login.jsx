@@ -25,7 +25,7 @@ const Login = () => {
     if (!password) return setError("Password is required");
 
     try {
-      setLoading(true);//set loading i have used for api request is in progress   why used->because use not press button multiple time
+      setLoading(true);//show request is in progress 
       const res = await loginApi(email, password);
 
       login(res.data.token); // stored only token

@@ -11,23 +11,23 @@ const UserProjectTasks = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
 
-  // 🔹 Data
+  //  Data
   const [tasks, setTasks] = useState([]);
   const [pagination, setPagination] = useState(null);
 
-  // 🔹 UI state
+  //  UI state
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Pagination
+  //  Pagination
   const [page, setPage] = useState(1);
   const limit = 5;
 
-  // 🔹 Filters
+  //  Filters
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
 
-  // 🔹 Fetch tasks
+  //  Fetch tasks
   const fetchTasks = async () => {
     try {
       setLoading(true);
@@ -40,8 +40,8 @@ const UserProjectTasks = () => {
         priority: priority || undefined,
       });
 
-      setTasks(res.data.data);              // ✅ ARRAY ONLY
-      setPagination(res.data.pagination);   // ✅ META
+      setTasks(res.data.data);              
+      setPagination(res.data.pagination);   
 
     } catch (err) {
       console.error("Failed to fetch tasks", err);
@@ -50,17 +50,30 @@ const UserProjectTasks = () => {
     }
   };
 
-  // 🔹 Re-fetch when params change
+  //  Re-fetch when params change
   useEffect(() => {
     fetchTasks();
   }, [projectId, page, search, status, priority]);
 
-  // 🔹 Delete task
+  //  Delete task
   const handleDelete = async (taskId) => {
     if (!confirm("Delete this task?")) return;
     await deleteTaskApi(taskId);
     fetchTasks();
   };
+
+//   const isOverdue = (dueDate, status) => {
+//   if (!dueDate || status === "DONE") return false;
+
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0); // normalize today
+
+//   const taskDueDate = new Date(dueDate);
+//   taskDueDate.setHours(0, 0, 0, 0);
+
+//   return taskDueDate < today;
+// };
+
 
   return (
     <MainLayout>
@@ -81,7 +94,7 @@ const UserProjectTasks = () => {
 </button>
 
 
-      {/* 🔍 Filters */}
+      {/*  Filters */}
       <div className="flex gap-2 mb-4">
         <input
           className="border p-2 rounded flex-1"
@@ -157,7 +170,7 @@ const UserProjectTasks = () => {
     Comments
   </button>
 
-  {/* ✅ NEW: Task Logs */}
+  {/*  NEW: Task Logs */}
   <button
     onClick={() => navigate(`/tasks/${t.id}/logs`)}
     className="text-purple-600 hover:underline"
@@ -178,7 +191,7 @@ const UserProjectTasks = () => {
         </ul>
       )}
 
-      {/* 🔢 Pagination */}
+      {/*  Pagination */}
       {pagination && (
         <div className="flex items-center gap-4 mt-4">
           <button
